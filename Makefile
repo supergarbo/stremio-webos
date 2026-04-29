@@ -1,7 +1,7 @@
 DEVICE ?= tv
 APP_ID = io.strem.tv
 SERVER_VERSION = 4.20.17
-VIDAA_REF = 59db53a99312d995f88a792668d55ae80f9d104c
+VIDAA_REF = 208d437e5138adff0865443a2a88c4fcee84ece6
 VIDAA_REPO = https://github.com/NoobyGains/stremio-vidaa-tv/archive/$(VIDAA_REF).tar.gz
 VERSION = $(shell python3 -c "import json; print(json.load(open('app/appinfo.json'))['version'])")
 IPK = $(APP_ID)_$(VERSION)_all.ipk
