@@ -3,6 +3,7 @@ APP_ID = io.strem.tv
 SERVER_VERSION = 4.20.17
 VIDAA_REF = 208d437e5138adff0865443a2a88c4fcee84ece6
 VIDAA_REPO = https://github.com/NoobyGains/stremio-vidaa-tv/archive/$(VIDAA_REF).tar.gz
+FFMPEG_URL = https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-arm64-static.tar.xz
 VERSION = $(shell python3 -c "import json; print(json.load(open('app/appinfo.json'))['version'])")
 IPK = $(APP_ID)_$(VERSION)_all.ipk
 
@@ -12,7 +13,15 @@ service/server.js:
 	@echo "==> Downloading Stremio server v$(SERVER_VERSION)..."
 	@curl -so $@ "https://dl.strem.io/server/v$(SERVER_VERSION)/webos/server.js"
 
-build: service/server.js
+service/bin/ffmpeg service/bin/ffprobe:
+	@echo "==> Downloading static ffmpeg+ffprobe (aarch64)..."
+	@rm -rf /tmp/stremio-ffmpeg && mkdir -p /tmp/stremio-ffmpeg service/bin
+	@curl -sL $(FFMPEG_URL) | tar xJ --strip-components=1 -C /tmp/stremio-ffmpeg
+	@cp /tmp/stremio-ffmpeg/ffmpeg /tmp/stremio-ffmpeg/ffprobe service/bin/
+	@chmod +x service/bin/ffmpeg service/bin/ffprobe
+	@rm -rf /tmp/stremio-ffmpeg
+
+build: service/server.js service/bin/ffmpeg service/bin/ffprobe
 	@echo "==> Downloading Vidaa frontend..."
 	@rm -rf /tmp/stremio-vidaa-build && mkdir -p /tmp/stremio-vidaa-build
 	@curl -sL $(VIDAA_REPO) | tar xz --strip-components=1 -C /tmp/stremio-vidaa-build
@@ -46,4 +55,4 @@ restart:
 	@ares-launch --device $(DEVICE) $(APP_ID)
 
 clean:
-	rm -rf service/www service/server.js *.ipk
+	rm -rf service/www service/server.js service/bin *.ipk

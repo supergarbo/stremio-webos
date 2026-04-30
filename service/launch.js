@@ -70,5 +70,10 @@ http.createServer(function(req, res) {
     pendingMessages = [];
 });
 
-// Start the streaming server
+// Point the streaming server at the bundled ffmpeg binaries.
+// HLS remux/transcode requires ffmpeg+ffprobe; without these the streaming
+// server's /hlsv2/* endpoints return 500 "no ffmpeg found".
+process.env.FFMPEG_BIN = path.join(__dirname, 'bin', 'ffmpeg');
+process.env.FFPROBE_BIN = path.join(__dirname, 'bin', 'ffprobe');
+
 require('./server.js');
