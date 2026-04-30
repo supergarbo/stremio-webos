@@ -1,0 +1,26 @@
+--- video.chunk.js
++++ video.chunk.js
+@@ -401,9 +401,7 @@
+                                             maxAudioChannels: h
+                                         }),
+                                         p = !!(n.forceTranscoding || window.__FORCE_TRANSCODE__);
+-                                    return (p ? (window.__FORCE_TRANSCODE__ = !1, Promise.resolve(!1)) : t.canPlayStream({
+-                                        url: r
+-                                    }, f)).catch((function(e) {
++                                    return (p ? (window.__FORCE_TRANSCODE__ = !1, Promise.resolve(!1)) : Promise.resolve(!0)).catch((function(e) {
+                                         return console.warn("Media probe error", e), !1
+                                     })).then((function(e) {
+                                         if (e) return {
+--- 1477.chunk.js
++++ 1477.chunk.js
+@@ -16266,9 +16266,7 @@
+                                             audioCodecs: d,
+                                             maxAudioChannels: h
+                                         });
+-                                    return (n.forceTranscoding ? Promise.resolve(!1) : t.canPlayStream({
+-                                        url: r
+-                                    }, f)).catch((function(e) {
++                                    return (n.forceTranscoding ? Promise.resolve(!1) : Promise.resolve(!0)).catch((function(e) {
+                                         return console.warn("Media probe error", e), !1
+                                     })).then((function(e) {
+                                         if (e) return {
