@@ -125,7 +125,7 @@
                                          }
                                          break;
                                      case "volume":
-@@ -21049,7 +21049,47 @@
+@@ -21049,7 +21049,68 @@
                      G("buffering"), G("buffered")
                  }, A.onloadeddata = function() {
                      G("buffering"), G("buffered")
@@ -145,6 +145,27 @@
 +                            });
 +                            if (e.enabled) v = "EMBEDDED_" + t;
 +                        });
++                        // Enrich labels from streaming server /tracks/ data when the native
++                        // audioTrack.label is empty (e.g. MKVs without TITLE metadata).
++                        // Native label wins when present so we don't downgrade rich titles
++                        // ("English (Director's Commentary)") to bare language codes.
++                        if (D && D.url) {
++                            o(D.url, function(trackData) {
++                                if (trackData && trackData.audio && trackData.audio.length) {
++                                    T.forEach(function(track, i) {
++                                        for (var j = 0; j < trackData.audio.length; j++) {
++                                            var td = trackData.audio[j];
++                                            if ((td.lang === track.lang || (td.lang && track.lang && td.lang.substring(0,2) === track.lang.substring(0,2))) && td.label) {
++                                                if (!track.label) track.label = td.label;
++                                                trackData.audio.splice(j, 1);
++                                                break;
++                                            }
++                                        }
++                                    });
++                                    G("audioTracks");
++                                }
++                            });
++                        }
 +                        // Auto-select preferred audio language from Stremio settings
 +                        var prefLang = null;
 +                        try { prefLang = JSON.parse(localStorage.getItem("profile")).settings.audioLanguage; } catch(e) {}
